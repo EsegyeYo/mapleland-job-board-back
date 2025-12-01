@@ -3,6 +3,7 @@ package com.ma_recurit.entity.member;
 import com.ma_recurit.entity.BaseEntity;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -29,4 +30,19 @@ public class Profile extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id", nullable = false)
     private Member member;
+
+    @Builder
+    public Profile(BigInteger id, String nickname, int level, Job job, Member member) {
+        this.id = id;
+        this.nickname = nickname;
+        this.level = level;
+        this.job = job;
+        this.member = member;
+    }
+
+    public void updateProfile(String nickname, int level, Job job) {
+        this.nickname = nickname;
+        this.level = level;
+        this.job = job;
+    }
 }
