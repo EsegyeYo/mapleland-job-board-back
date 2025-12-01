@@ -51,4 +51,9 @@ public class Member extends BaseEntity {
     public void updateDiscordPhoto(String discordUrl) {
         this.discord_photo = discordUrl;
     }
+
+    public void updateMemberBan(boolean user_ban) {
+        this.member_ban = user_ban;
+    }
+
 }
