@@ -17,6 +17,10 @@ public class CustomOAuth2User implements OAuth2User {
         this.attributes = attributes;
     }
 
+    public boolean getMemberBan(){
+        return member.isMember_ban();
+    }
+
     public BigInteger getMemberId(){
         return member.getId();
     }

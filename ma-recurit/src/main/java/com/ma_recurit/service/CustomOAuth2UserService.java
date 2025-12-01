@@ -9,6 +9,7 @@ import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserServ
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserService;
 import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
+import org.springframework.security.oauth2.core.OAuth2Error;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 
@@ -22,12 +23,11 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
 
     @Override
     public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
-        System.out.println("=== CustomOAuth2UserService.loadUser CALLED ===");
+
         DefaultOAuth2UserService delegate = new DefaultOAuth2UserService();
         OAuth2User oAuth2User = delegate.loadUser(userRequest);
 
         String registrationId = userRequest.getClientRegistration().getRegistrationId();
-        System.out.println("registrationId = " + registrationId);
         if (!"discord".equals(registrationId)) {
             return oAuth2User;
         }
@@ -45,10 +45,18 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
         // DB에 Member 생성/업데이트
         Member member = memberRepository.findByDiscordId(discordId)
                 .map(m -> {
+                    // Member 벤 상태 유무 체크
+                    if (m.isMember_ban()) {
+                        OAuth2Error error = new OAuth2Error("access_denied", "해당 계정은 이용이 제한되었습니다.", null);
+                        throw new OAuth2AuthenticationException(error);
+                    }
+
+                    // 밴이 아니라면 프로필만 업데이트
                     m.updateDiscordPhoto(avatarUrl);
                     return m;
                 })
                 .orElseGet(() -> {
+                    // 신규 회원이면 바로 생성
                     Member newMember = Member.builder()
                             .discord_id(discordId)
                             .discord_photo(avatarUrl)
