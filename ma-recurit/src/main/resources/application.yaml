@@ -1,3 +1,47 @@
 spring:
-  application:
-    name: ma-recurit
+  datasource:
+    driver-class-name: org.h2.Driver
+    username: sa
+    password:
+    url: jdbc:h2:mem:test
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+  jpa:
+    database-platform: org.hibernate.dialect.H2Dialect
+    hibernate:
+      ddl-auto: create-drop
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.H2Dialect
+        format_sql: true
+        show_sql: true
+    defer-datasource-initialization: true
+  sql:
+    init.mode: always
+
+  management:
+    endpoints:
+      web:
+        exposure:
+          include: "*"
+  security:
+    oauth2:
+      client:
+        registration:
+          discord:
+            client-id: 1438427563994124331
+            client-secret: eanOSAU7VHhSiTu4S8v2WYLL1W_nlWf9
+            scope:
+              - identify
+              - email
+            redirect-uri: "{baseUrl}/login/oauth2/code/{registrationId}"
+            authorization-grant-type: authorization_code
+            client-name: Discord
+        provider:
+          discord:
+            authorization-uri: https://discord.com/api/oauth2/authorize
+            token-uri: https://discord.com/api/oauth2/token
+            user-info-uri: https://discord.com/api/users/@me
+            user-name-attribute: id
