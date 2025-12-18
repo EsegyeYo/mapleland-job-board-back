@@ -1,10 +1,12 @@
-package com.ma_recruit.controller.member;
+package com.ma_recruit.controller.party;
 
-import com.ma_recruit.dto.member.request.ProfileCreateRequestDto;
 import com.ma_recruit.dto.member.request.ProfileUpdateRequestDto;
 import com.ma_recruit.dto.member.response.ProfileResponseDto;
+import com.ma_recruit.dto.party.request.PartyPostCreateRequestDto;
+import com.ma_recruit.dto.party.request.PartyPostUpdateRequestDto;
+import com.ma_recruit.dto.party.response.PartyPostResponseDto;
 import com.ma_recruit.entity.member.CustomOAuth2User;
-import com.ma_recruit.service.member.ProfileService;
+import com.ma_recruit.service.party.PartyPostService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -16,32 +18,30 @@ import java.math.BigInteger;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/profiles")
-public class ProfileController {
-
-    private final ProfileService profileService;
+@RequestMapping("/api/partys")
+public class PartyPostController {
+    PartyPostService partyPostService;
 
     @PostMapping
-    public ResponseEntity<ProfileResponseDto> createProfile(
+    public ResponseEntity<PartyPostResponseDto> createPartyPost(
             @AuthenticationPrincipal CustomOAuth2User oauthUser,
-            @RequestBody @Valid ProfileCreateRequestDto requestDto) {
+            @RequestBody @Valid PartyPostCreateRequestDto requestDto) {
 
         if (oauthUser == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
 
         BigInteger memberId = oauthUser.getMemberId();
-
-        ProfileResponseDto responseDto = profileService.createProfile(memberId, requestDto);
+        PartyPostResponseDto responseDto = partyPostService.createPartyPost(memberId, requestDto);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(responseDto);
     }
 
-    @PutMapping("/{profileId}")
-    public ResponseEntity<ProfileResponseDto> updateProfile(
+    @PutMapping("/{partyPostId}")
+    public ResponseEntity<PartyPostResponseDto> updatePartyPost(
             @AuthenticationPrincipal CustomOAuth2User oauthUser,
-            @PathVariable BigInteger profileId,
-            @RequestBody @Valid ProfileUpdateRequestDto requestDto) {
+            @PathVariable BigInteger partyPostId,
+            @RequestBody @Valid PartyPostUpdateRequestDto requestDto) {
 
         if (oauthUser == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
@@ -49,16 +49,16 @@ public class ProfileController {
 
         BigInteger memberId = oauthUser.getMemberId();
 
-        ProfileResponseDto responseDto =
-                profileService.updateProfile(memberId, profileId, requestDto);
+        PartyPostResponseDto responseDto =
+                partyPostService.updatePartyPost(memberId, partyPostId, requestDto);
 
         return ResponseEntity.ok(responseDto);
     }
 
-    @DeleteMapping("/{profileId}")
-    public ResponseEntity<Void> deleteProfile(
+    @DeleteMapping("/{partyPostId}")
+    public ResponseEntity<Void> deletePartyPost(
             @AuthenticationPrincipal CustomOAuth2User oauthUser,
-            @PathVariable BigInteger profileId) {
+            @PathVariable BigInteger partyPostId) {
 
         if (oauthUser == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
@@ -66,8 +66,9 @@ public class ProfileController {
 
         BigInteger memberId = oauthUser.getMemberId();
 
-        profileService.deleteProfile(memberId, profileId);
+        partyPostService.deletePartyPost(memberId, partyPostId);
 
         return ResponseEntity.noContent().build();
     }
+
 }

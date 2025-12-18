@@ -5,6 +5,7 @@ import com.ma_recruit.entity.member.Job;
 import com.ma_recruit.entity.member.Member;
 import com.ma_recruit.entity.party.PartyType;
 import jakarta.persistence.*;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
@@ -31,6 +32,10 @@ public class RaidPost extends BaseEntity {
 
     private Job job;
 
+    private int member_max_count;
+
+    private int member_count;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "raid_mob_id", nullable = false)
     private RaidMob raidMob;
@@ -38,4 +43,43 @@ public class RaidPost extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id", nullable = false)
     private Member member;
+
+    @Builder
+    public RaidPost(BigInteger id, String description, boolean status, PartyType partyType, Job job, int member_max_count, int member_count, RaidMob raidMob, Member member) {
+        this.id = id;
+        this.description = description;
+        this.status = status;
+        this.partyType = partyType;
+        this.job = job;
+        this.member_max_count = member_max_count;
+        this.member_count = member_count;
+        this.raidMob = raidMob;
+        this.member = member;
+    }
+
+    public void updateDescription(String description) {
+        this.description = description;
+    }
+    public void updateStatus(boolean status) {
+        this.status = status;
+    }
+    public void updatePartyType(PartyType partyType) {
+        this.partyType = partyType;
+    }
+    public void updateJob(Job job) {
+        this.job = job;
+    }
+    public void updateRaidMob(RaidMob raidMob) {
+        this.raidMob = raidMob;
+    }
+    public void updateMember(Member member) {
+        this.member = member;
+    }
+    public void updateMember_max_count(int member_max_count) {
+        this.member_max_count = member_max_count;
+    }
+    public void updateMember_count(int member_count) {
+        this.member_count = member_count;
+    }
+
 }

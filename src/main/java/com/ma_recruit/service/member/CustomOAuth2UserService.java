@@ -1,4 +1,4 @@
-package com.ma_recruit.service;
+package com.ma_recruit.service.member;
 
 import com.ma_recruit.entity.member.CustomOAuth2User;
 import com.ma_recruit.entity.member.Member;

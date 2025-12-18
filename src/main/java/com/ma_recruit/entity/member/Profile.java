@@ -40,9 +40,13 @@ public class Profile extends BaseEntity {
         this.member = member;
     }
 
-    public void updateProfile(String nickname, int level, Job job) {
+    public void updateNickname(String nickname) {
         this.nickname = nickname;
+    }
+    public void updateLevel(int level) {
         this.level = level;
+    }
+    public void updateJob(Job job) {
         this.job = job;
     }
 }
