@@ -1,10 +1,10 @@
-package com.ma_recruit.controller.member;
+package com.ma_recruit.controller.raid;
 
-import com.ma_recruit.dto.member.request.ProfileCreateRequestDto;
-import com.ma_recruit.dto.member.request.ProfileUpdateRequestDto;
-import com.ma_recruit.dto.member.response.ProfileResponseDto;
+import com.ma_recruit.dto.raid.request.RaidPostCreateRequestDto;
+import com.ma_recruit.dto.raid.request.RaidPostUpdateRequestDto;
+import com.ma_recruit.dto.raid.response.RaidPostResponseDto;
 import com.ma_recruit.entity.member.CustomOAuth2User;
-import com.ma_recruit.service.member.ProfileService;
+import com.ma_recruit.service.raid.RaidPostService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -16,32 +16,30 @@ import java.math.BigInteger;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/profiles")
-public class ProfileController {
-
-    private final ProfileService profileService;
+@RequestMapping("/api/raids")
+public class RaidPostController {
+    RaidPostService raidPostService;
 
     @PostMapping
-    public ResponseEntity<ProfileResponseDto> createProfile(
+    public ResponseEntity<RaidPostResponseDto> createRaidPost(
             @AuthenticationPrincipal CustomOAuth2User oauthUser,
-            @RequestBody @Valid ProfileCreateRequestDto requestDto) {
+            @RequestBody @Valid RaidPostCreateRequestDto requestDto) {
 
         if (oauthUser == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
 
         BigInteger memberId = oauthUser.getMemberId();
-
-        ProfileResponseDto responseDto = profileService.createProfile(memberId, requestDto);
+        RaidPostResponseDto responseDto = raidPostService.createPartyPost(memberId, requestDto);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(responseDto);
     }
 
-    @PutMapping("/{profileId}")
-    public ResponseEntity<ProfileResponseDto> updateProfile(
+    @PutMapping("/{raidPostId}")
+    public ResponseEntity<RaidPostResponseDto> updateRaidPost(
             @AuthenticationPrincipal CustomOAuth2User oauthUser,
-            @PathVariable BigInteger profileId,
-            @RequestBody @Valid ProfileUpdateRequestDto requestDto) {
+            @PathVariable BigInteger raidPostId,
+            @RequestBody @Valid RaidPostUpdateRequestDto requestDto) {
 
         if (oauthUser == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
@@ -49,16 +47,16 @@ public class ProfileController {
 
         BigInteger memberId = oauthUser.getMemberId();
 
-        ProfileResponseDto responseDto =
-                profileService.updateProfile(memberId, profileId, requestDto);
+        RaidPostResponseDto responseDto =
+                raidPostService.updateRaidPost(memberId, raidPostId, requestDto);
 
         return ResponseEntity.ok(responseDto);
     }
 
-    @DeleteMapping("/{profileId}")
-    public ResponseEntity<Void> deleteProfile(
+    @DeleteMapping("/{raidPostId}")
+    public ResponseEntity<Void> deleteRaidPost(
             @AuthenticationPrincipal CustomOAuth2User oauthUser,
-            @PathVariable BigInteger profileId) {
+            @PathVariable BigInteger raidPostId) {
 
         if (oauthUser == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
@@ -66,8 +64,9 @@ public class ProfileController {
 
         BigInteger memberId = oauthUser.getMemberId();
 
-        profileService.deleteProfile(memberId, profileId);
+        raidPostService.deleteRaidPost(memberId, raidPostId);
 
         return ResponseEntity.noContent().build();
     }
+
 }

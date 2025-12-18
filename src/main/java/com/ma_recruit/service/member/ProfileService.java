@@ -1,4 +1,4 @@
-package com.ma_recruit.service;
+package com.ma_recruit.service.member;
 
 import com.ma_recruit.dto.member.request.ProfileCreateRequestDto;
 import com.ma_recruit.dto.member.request.ProfileUpdateRequestDto;
@@ -53,9 +53,9 @@ public class ProfileService {
         if (!profile.getMember().getId().equals(memberId)) {
             throw new IllegalStateException("권한이 없습니다. (본인 프로필만 수정 가능)");
         }
-
-        profile.updateProfile(dto.getNickname(), dto.getLevel(), dto.getJob());
-
+        if(dto.getNickname().isPresent()) { profile.updateNickname(dto.getNickname().get()); }
+        if(dto.getLevel().isPresent()) { profile.updateLevel(dto.getLevel().get()); }
+        if(dto.getJob().isPresent()) { profile.updateJob(dto.getJob().get()); }
         return new ProfileResponseDto(profile);
     }
 
