@@ -1,5 +1,6 @@
 package com.ma_recruit.controller.raid;
 
+import com.ma_recruit.dto.guild.response.GuildPostResponseDto;
 import com.ma_recruit.dto.raid.request.RaidPostCreateRequestDto;
 import com.ma_recruit.dto.raid.request.RaidPostUpdateRequestDto;
 import com.ma_recruit.dto.raid.response.RaidPostResponseDto;
@@ -7,6 +8,10 @@ import com.ma_recruit.entity.member.CustomOAuth2User;
 import com.ma_recruit.service.raid.RaidPostService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -18,7 +23,7 @@ import java.math.BigInteger;
 @RequiredArgsConstructor
 @RequestMapping("/api/raids")
 public class RaidPostController {
-    RaidPostService raidPostService;
+    private final RaidPostService raidPostService;
 
     @PostMapping
     public ResponseEntity<RaidPostResponseDto> createRaidPost(
@@ -67,6 +72,13 @@ public class RaidPostController {
         raidPostService.deleteRaidPost(memberId, raidPostId);
 
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/raid-posts")
+    public Page<RaidPostResponseDto> getRaidPosts(
+            @PageableDefault(size = 10, sort = "createdAt", direction = Sort.Direction.DESC)
+            Pageable pageable) {
+        return raidPostService.getRaidPosts(pageable);
     }
 
 }

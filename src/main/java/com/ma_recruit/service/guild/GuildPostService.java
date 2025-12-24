@@ -3,22 +3,29 @@ package com.ma_recruit.service.guild;
 import com.ma_recruit.dto.guild.request.GuildPostCreateRequestDto;
 import com.ma_recruit.dto.guild.request.GuildPostUpdateRequestDto;
 import com.ma_recruit.dto.guild.response.GuildPostResponseDto;
+import com.ma_recruit.dto.party.response.PartyPostResponseDto;
 import com.ma_recruit.entity.guild.GuildPost;
 import com.ma_recruit.entity.member.Member;
+import com.ma_recruit.entity.party.PartyPost;
 import com.ma_recruit.repository.guild.GuildPostRepository;
 import com.ma_recruit.repository.member.MemberRepository;
 import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Service;
 
 import java.math.BigInteger;
 
+@Service
+@RequiredArgsConstructor
 public class GuildPostService {
-    GuildPostRepository guildPostRepository;
-    MemberRepository memberRepository;
+    private final GuildPostRepository guildPostRepository;
+    private final MemberRepository memberRepository;
 
     /**
      * 길드 게시글 생성
      */
-
     @Transactional
     public GuildPostResponseDto createGuildPost(BigInteger memberId, GuildPostCreateRequestDto dto) {
         Member member = memberRepository.findById(memberId)
@@ -41,7 +48,6 @@ public class GuildPostService {
     /**
      * 레이드 포스트 수정
      */
-
     @Transactional
     public GuildPostResponseDto updateGuildPost(BigInteger memberId,
                                               BigInteger guildPostId,
@@ -63,7 +69,6 @@ public class GuildPostService {
     /**
      * 레이드 포스트 삭제
      */
-
     @Transactional
     public void deleteGuildPost(BigInteger memberId,
                                BigInteger guildPostId) {
@@ -75,5 +80,16 @@ public class GuildPostService {
         }
 
         guildPostRepository.delete(guildPost);
+    }
+
+    /**
+     * 길드포스트 페이징네이션 불러오기
+     */
+    @Transactional
+    public Page<GuildPostResponseDto> getGuildPosts(Pageable pageable) {
+
+        Page<GuildPost> page = guildPostRepository.findAll(pageable);
+
+        return page.map(GuildPostResponseDto::new);
     }
 }

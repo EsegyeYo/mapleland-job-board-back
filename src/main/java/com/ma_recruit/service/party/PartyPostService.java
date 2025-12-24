@@ -11,6 +11,8 @@ import com.ma_recruit.repository.party.MapleMapRepository;
 import com.ma_recruit.repository.party.PartyPostRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.math.BigInteger;
@@ -18,9 +20,9 @@ import java.math.BigInteger;
 @Service
 @RequiredArgsConstructor
 public class PartyPostService {
-    MemberRepository memberRepository;
-    MapleMapRepository mapleMapRepository;
-    PartyPostRepository partyPostRepository;
+    private final MemberRepository memberRepository;
+    private final MapleMapRepository mapleMapRepository;
+    private final PartyPostRepository partyPostRepository;
 
     /**
      * 파티 게시글 생성
@@ -49,43 +51,54 @@ public class PartyPostService {
         return new PartyPostResponseDto(partyPost);
     }
 
-        /**
-         * 파티포스트 수정
-         */
-        @Transactional
-        public PartyPostResponseDto updatePartyPost(BigInteger memberId,
-                                                 BigInteger partyPostId,
-                                                 PartyPostUpdateRequestDto dto) {
+    /**
+     * 파티포스트 수정
+     */
+    @Transactional
+    public PartyPostResponseDto updatePartyPost(BigInteger memberId,
+                                             BigInteger partyPostId,
+                                             PartyPostUpdateRequestDto dto) {
 
-            PartyPost partyPost = partyPostRepository.findById(partyPostId)
-                    .orElseThrow(() -> new IllegalArgumentException("글을 찾을 수 없습니다."));
-            MapleMap mapleMap = mapleMapRepository.findById(dto.getMapId().get())
-                    .orElseThrow(() -> new IllegalArgumentException("Map Not Found"));
-            if (!partyPost.getMember().getId().equals(memberId)) {
-                throw new IllegalStateException("권한이 없습니다. (본인 게시글만 수정 가능)");
-            }
-            if(dto.getDescription().isPresent()){ partyPost.updateDescription(dto.getDescription().get()); }
-            if(dto.getJob().isPresent()){ partyPost.updateJob(dto.getJob().get()); }
-            if(dto.getMapId().isPresent()) { partyPost.updateMapleMap(mapleMap); }
-            if(dto.getMember_count().isPresent()) { partyPost.updateMember_count(dto.getMember_count().get());}
-            if(dto.getMember_max_count().isPresent()) { partyPost.updateMember_max_count(dto.getMember_max_count().get());}
+        PartyPost partyPost = partyPostRepository.findById(partyPostId)
+                .orElseThrow(() -> new IllegalArgumentException("글을 찾을 수 없습니다."));
+        MapleMap mapleMap = mapleMapRepository.findById(dto.getMapId().get())
+                .orElseThrow(() -> new IllegalArgumentException("Map Not Found"));
+        if (!partyPost.getMember().getId().equals(memberId)) {
+            throw new IllegalStateException("권한이 없습니다. (본인 게시글만 수정 가능)");
+        }
+        if(dto.getDescription().isPresent()){ partyPost.updateDescription(dto.getDescription().get()); }
+        if(dto.getJob().isPresent()){ partyPost.updateJob(dto.getJob().get()); }
+        if(dto.getMapId().isPresent()) { partyPost.updateMapleMap(mapleMap); }
+        if(dto.getMember_count().isPresent()) { partyPost.updateMember_count(dto.getMember_count().get());}
+        if(dto.getMember_max_count().isPresent()) { partyPost.updateMember_max_count(dto.getMember_max_count().get());}
 
-            return new PartyPostResponseDto(partyPost);
+        return new PartyPostResponseDto(partyPost);
+    }
+
+    /**
+     * 파티포스트 삭제
+     */
+    @Transactional
+    public void deletePartyPost(BigInteger memberId,
+                                BigInteger partyPostId) {
+
+        PartyPost partyPost = partyPostRepository.findById(partyPostId)
+                .orElseThrow(() -> new IllegalArgumentException("글을 찾을 수 없습니다."));
+        if (!partyPost.getMember().getId().equals(memberId)) {
+            throw new IllegalStateException("권한이 없습니다. (본인 게시글만 삭제 가능)");
         }
 
-        /**
-         * 파티포스트 삭제
-         */
-        @Transactional
-        public void deletePartyPost(BigInteger memberId,
-                                    BigInteger partyPostId) {
+        partyPostRepository.delete(partyPost);
+    }
 
-            PartyPost partyPost = partyPostRepository.findById(partyPostId)
-                    .orElseThrow(() -> new IllegalArgumentException("글을 찾을 수 없습니다."));
-            if (!partyPost.getMember().getId().equals(memberId)) {
-                throw new IllegalStateException("권한이 없습니다. (본인 게시글만 삭제 가능)");
-            }
+    /**
+     * 파티포스트 페이징네이션 불러오기
+     */
+    @Transactional
+    public Page<PartyPostResponseDto> getPartyPosts(Pageable pageable) {
 
-            partyPostRepository.delete(partyPost);
-        }
+        Page<PartyPost> page = partyPostRepository.findAll(pageable);
+
+        return page.map(PartyPostResponseDto::new);
+    }
 }

@@ -18,7 +18,6 @@ import java.math.BigInteger;
 @RequiredArgsConstructor
 @RequestMapping("/api/profiles")
 public class ProfileController {
-
     private final ProfileService profileService;
 
     @PostMapping

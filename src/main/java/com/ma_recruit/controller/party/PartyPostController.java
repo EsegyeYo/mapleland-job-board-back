@@ -9,6 +9,10 @@ import com.ma_recruit.entity.member.CustomOAuth2User;
 import com.ma_recruit.service.party.PartyPostService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -20,7 +24,7 @@ import java.math.BigInteger;
 @RequiredArgsConstructor
 @RequestMapping("/api/partys")
 public class PartyPostController {
-    PartyPostService partyPostService;
+    private final PartyPostService partyPostService;
 
     @PostMapping
     public ResponseEntity<PartyPostResponseDto> createPartyPost(
@@ -71,4 +75,10 @@ public class PartyPostController {
         return ResponseEntity.noContent().build();
     }
 
+    @GetMapping("/party-posts")
+    public Page<PartyPostResponseDto> getPartyPosts(
+            @PageableDefault(size = 10, sort = "createdAt", direction = Sort.Direction.DESC)
+            Pageable pageable) {
+        return partyPostService.getPartyPosts(pageable);
+    }
 }
