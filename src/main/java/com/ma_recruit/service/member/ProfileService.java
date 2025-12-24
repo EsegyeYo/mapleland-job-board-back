@@ -5,6 +5,7 @@ import com.ma_recruit.dto.member.request.ProfileUpdateRequestDto;
 import com.ma_recruit.dto.member.response.ProfileResponseDto;
 import com.ma_recruit.entity.member.Member;
 import com.ma_recruit.entity.member.Profile;
+import com.ma_recruit.global.exception.ProfileException;
 import com.ma_recruit.repository.member.MemberRepository;
 import com.ma_recruit.repository.member.ProfileRepository;
 import jakarta.transaction.Transactional;
@@ -16,7 +17,6 @@ import java.math.BigInteger;
 @Service
 @RequiredArgsConstructor
 public class ProfileService {
-
     private final MemberRepository memberRepository;
     private final ProfileRepository profileRepository;
 
@@ -26,8 +26,10 @@ public class ProfileService {
     @Transactional
     public ProfileResponseDto createProfile(BigInteger memberId, ProfileCreateRequestDto dto) {
         Member member = memberRepository.findById(memberId)
-                .orElseThrow(() -> new IllegalArgumentException("Member Not Found"));
-
+                .orElseThrow(() -> new ProfileException("Member Not Found"));
+        if(member.getProfile().size() >= 5){
+            throw new ProfileException("프로필은 최대 5개까지만 만들 수 있습니다.");
+        }
         Profile profile = Profile.builder()
                 .nickname(dto.getNickname())
                 .level(dto.getLevel())
@@ -48,10 +50,10 @@ public class ProfileService {
                                             ProfileUpdateRequestDto dto) {
 
         Profile profile = profileRepository.findById(profileId)
-                .orElseThrow(() -> new IllegalArgumentException("Profile Not Found"));
+                .orElseThrow(() -> new ProfileException("Profile Not Found"));
 
         if (!profile.getMember().getId().equals(memberId)) {
-            throw new IllegalStateException("권한이 없습니다. (본인 프로필만 수정 가능)");
+            throw new ProfileException("권한이 없습니다. (본인 프로필만 수정 가능)");
         }
         if(dto.getNickname().isPresent()) { profile.updateNickname(dto.getNickname().get()); }
         if(dto.getLevel().isPresent()) { profile.updateLevel(dto.getLevel().get()); }
@@ -65,10 +67,10 @@ public class ProfileService {
     @Transactional
     public void deleteProfile(BigInteger memberId, BigInteger profileId) {
         Profile profile = profileRepository.findById(profileId)
-                .orElseThrow(() -> new IllegalArgumentException("Profile Not Found"));
+                .orElseThrow(() -> new ProfileException("Profile Not Found"));
 
         if (!profile.getMember().getId().equals(memberId)) {
-            throw new IllegalStateException("권한이 없습니다. (본인 프로필만 삭제 가능)");
+            throw new ProfileException("권한이 없습니다. (본인 프로필만 삭제 가능)");
         }
 
         profileRepository.delete(profile);

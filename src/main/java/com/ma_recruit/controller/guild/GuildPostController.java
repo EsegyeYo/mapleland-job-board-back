@@ -3,9 +3,15 @@ package com.ma_recruit.controller.guild;
 import com.ma_recruit.dto.guild.request.GuildPostCreateRequestDto;
 import com.ma_recruit.dto.guild.request.GuildPostUpdateRequestDto;
 import com.ma_recruit.dto.guild.response.GuildPostResponseDto;
+import com.ma_recruit.dto.party.response.PartyPostResponseDto;
 import com.ma_recruit.entity.member.CustomOAuth2User;
 import com.ma_recruit.service.guild.GuildPostService;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -13,8 +19,11 @@ import org.springframework.web.bind.annotation.*;
 
 import java.math.BigInteger;
 
+@RestController
+@RequiredArgsConstructor
+@RequestMapping("/api/guilds")
 public class GuildPostController {
-    GuildPostService guildPostService;
+    private final GuildPostService guildPostService;
 
     @PostMapping
     public ResponseEntity<GuildPostResponseDto> createGuildPost(
@@ -63,5 +72,12 @@ public class GuildPostController {
         guildPostService.deleteGuildPost(memberId, guildPostId);
 
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/guild-posts")
+    public Page<GuildPostResponseDto> getGuildPosts(
+            @PageableDefault(size = 10, sort = "createdAt", direction = Sort.Direction.DESC)
+            Pageable pageable) {
+        return guildPostService.getGuildPosts(pageable);
     }
 }

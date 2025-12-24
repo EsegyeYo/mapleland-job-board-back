@@ -62,3 +62,6 @@ out/
 
 # Spring settings
 .springBeans
+
+# Test
+*.html

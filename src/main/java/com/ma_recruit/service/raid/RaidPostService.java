@@ -1,27 +1,34 @@
 package com.ma_recruit.service.raid;
 
+import com.ma_recruit.dto.party.response.PartyPostResponseDto;
 import com.ma_recruit.dto.raid.request.RaidPostCreateRequestDto;
 import com.ma_recruit.dto.raid.request.RaidPostUpdateRequestDto;
 import com.ma_recruit.dto.raid.response.RaidPostResponseDto;
 import com.ma_recruit.entity.member.Member;
+import com.ma_recruit.entity.party.PartyPost;
 import com.ma_recruit.entity.raid.RaidMob;
 import com.ma_recruit.entity.raid.RaidPost;
 import com.ma_recruit.repository.member.MemberRepository;
 import com.ma_recruit.repository.raid.RaidMobRepository;
 import com.ma_recruit.repository.raid.RaidPostRepository;
 import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Service;
 
 import java.math.BigInteger;
 
+@Service
+@RequiredArgsConstructor
 public class RaidPostService {
-    MemberRepository memberRepository;
-    RaidMobRepository raidMobRepository;
-    RaidPostRepository raidPostRepository;
+    private final MemberRepository memberRepository;
+    private final RaidMobRepository raidMobRepository;
+    private final RaidPostRepository raidPostRepository;
 
     /**
      * 레이드 게시글 생성
      */
-
     @Transactional
     public RaidPostResponseDto createPartyPost(BigInteger memberId, RaidPostCreateRequestDto dto) {
         Member member = memberRepository.findById(memberId)
@@ -83,5 +90,16 @@ public class RaidPostService {
         }
 
         raidPostRepository.delete(raidPost);
+    }
+
+    /**
+     * 레이드포스트 페이징네이션 불러오기
+     */
+    @Transactional
+    public Page<RaidPostResponseDto> getRaidPosts(Pageable pageable) {
+
+        Page<RaidPost> page = raidPostRepository.findAll(pageable);
+
+        return page.map(RaidPostResponseDto::new);
     }
 }
