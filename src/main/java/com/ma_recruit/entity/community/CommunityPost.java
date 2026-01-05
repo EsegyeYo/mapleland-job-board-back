@@ -15,7 +15,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class CommunityPost extends BaseEntity {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
     @Column(nullable = false)

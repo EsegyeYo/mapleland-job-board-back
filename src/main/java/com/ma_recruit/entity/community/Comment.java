@@ -13,7 +13,7 @@ import java.math.BigInteger;
 @RequiredArgsConstructor
 public class Comment extends BaseEntity {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
     @Column(nullable = false)
