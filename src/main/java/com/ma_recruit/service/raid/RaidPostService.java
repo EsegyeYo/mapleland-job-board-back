@@ -1,23 +1,21 @@
 package com.ma_recruit.service.raid;
 
-import com.ma_recruit.dto.party.response.PartyPostResponseDto;
+import com.ma_recruit.dto.guild.response.GuildPostResponseDto;
 import com.ma_recruit.dto.raid.request.RaidPostCreateRequestDto;
 import com.ma_recruit.dto.raid.request.RaidPostUpdateRequestDto;
 import com.ma_recruit.dto.raid.response.RaidPostResponseDto;
 import com.ma_recruit.entity.member.Member;
-import com.ma_recruit.entity.party.PartyPost;
+import com.ma_recruit.entity.party.PartyType;
 import com.ma_recruit.entity.raid.RaidMob;
 import com.ma_recruit.entity.raid.RaidPost;
 import com.ma_recruit.repository.member.MemberRepository;
 import com.ma_recruit.repository.raid.RaidMobRepository;
 import com.ma_recruit.repository.raid.RaidPostRepository;
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-
-import java.math.BigInteger;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -30,7 +28,7 @@ public class RaidPostService {
      * 레이드 게시글 생성
      */
     @Transactional
-    public RaidPostResponseDto createPartyPost(BigInteger memberId, RaidPostCreateRequestDto dto) {
+    public RaidPostResponseDto createPartyPost(int memberId, RaidPostCreateRequestDto dto) {
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new IllegalArgumentException("Member Not Found"));
         RaidMob raidMob = raidMobRepository.findById(dto.getMobId())
@@ -56,15 +54,15 @@ public class RaidPostService {
      * 레이드 포스트 수정
      */
     @Transactional
-    public RaidPostResponseDto updateRaidPost(BigInteger memberId,
-                                                BigInteger raidPostId,
+    public RaidPostResponseDto updateRaidPost(int memberId,
+                                              int raidPostId,
                                                 RaidPostUpdateRequestDto dto) {
 
         RaidPost raidPost = raidPostRepository.findById(raidPostId)
                 .orElseThrow(() -> new IllegalArgumentException("글을 찾을 수 없습니다."));
         RaidMob raidMob = raidMobRepository.findById(dto.getMobId().get())
                 .orElseThrow(() -> new IllegalArgumentException("Mob Not Found"));
-        if (!raidPost.getMember().getId().equals(memberId)) {
+        if (raidPost.getMember().getId() != memberId) {
             throw new IllegalStateException("권한이 없습니다. (본인 게시글만 수정 가능)");
         }
         if(dto.getDescription().isPresent()){ raidPost.updateDescription(dto.getDescription().get()); }
@@ -80,12 +78,12 @@ public class RaidPostService {
      * 레이드 포스트 삭제
      */
     @Transactional
-    public void deleteRaidPost(BigInteger memberId,
-                                BigInteger raidPostId) {
+    public void deleteRaidPost(int memberId,
+                               int raidPostId) {
 
         RaidPost raidPost = raidPostRepository.findById(raidPostId)
                 .orElseThrow(() -> new IllegalArgumentException("글을 찾을 수 없습니다."));
-        if (!raidPost.getMember().getId().equals(memberId)) {
+        if (raidPost.getMember().getId() != memberId) {
             throw new IllegalStateException("권한이 없습니다. (본인 게시글만 삭제 가능)");
         }
 
@@ -95,11 +93,23 @@ public class RaidPostService {
     /**
      * 레이드포스트 페이징네이션 불러오기
      */
-    @Transactional
-    public Page<RaidPostResponseDto> getRaidPosts(Pageable pageable) {
+    @Transactional(readOnly = true)
+    public Page<RaidPostResponseDto> getRaidPostsByPartyType(PartyType partyType, Pageable pageable) {
 
-        Page<RaidPost> page = raidPostRepository.findAll(pageable);
+        Page<RaidPost> page = (partyType == null)
+                ? raidPostRepository.findAll(pageable)
+                : raidPostRepository.findByPartyType(partyType, pageable);
 
         return page.map(RaidPostResponseDto::new);
+    }
+
+    /**
+     * 레이드 포스트 단 건 불러오기
+     */
+    @Transactional(readOnly = true)
+    public RaidPostResponseDto getRaidPost(int raidPostId) {
+        return raidPostRepository.findById(raidPostId)
+                .map(RaidPostResponseDto::new)
+                .orElseThrow(() -> new IllegalArgumentException("글을 찾을 수 없습니다."));
     }
 }

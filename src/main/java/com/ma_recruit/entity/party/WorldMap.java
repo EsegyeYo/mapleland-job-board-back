@@ -11,11 +11,12 @@ import java.util.List;
 
 @Entity
 @Getter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@NoArgsConstructor
+@Table(name = "world_map")
 public class WorldMap {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private BigInteger id;
+    private int id;
 
     @Column(nullable = false)
     private String name;
@@ -25,4 +26,10 @@ public class WorldMap {
 
     @OneToMany(mappedBy = "worldMap", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<MapleMap> mapleMap = new ArrayList<>();
+
+    public WorldMap(String name, String world_url) {
+        this.name = name;
+        this.world_url = world_url;
+    }
+
 }

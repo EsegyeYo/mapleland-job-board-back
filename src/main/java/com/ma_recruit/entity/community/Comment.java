@@ -14,7 +14,7 @@ import java.math.BigInteger;
 public class Comment extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private BigInteger id;
+    private int id;
 
     @Column(nullable = false)
     private String content;

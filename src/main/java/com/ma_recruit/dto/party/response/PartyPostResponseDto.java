@@ -8,13 +8,13 @@ import lombok.Getter;
 import java.math.BigInteger;
 @Getter
 public class PartyPostResponseDto {
-    private BigInteger id;
+    private int id;
     private String description;
     private boolean status;
     private PartyType partyType;
     private Job job;
-    private BigInteger mapId;
-    private BigInteger memberId;
+    private int mapId;
+    private int memberId;
 
     public PartyPostResponseDto(PartyPost partyPost) {
         this.id = partyPost.getId();

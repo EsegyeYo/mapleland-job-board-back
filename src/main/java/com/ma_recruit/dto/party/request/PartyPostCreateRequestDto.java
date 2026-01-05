@@ -21,7 +21,7 @@ public class PartyPostCreateRequestDto {
     private Job job;
 
     @NotNull
-    private BigInteger mapId;
+    private int mapId;
 
     @Min(1)
     private int member_max_count;

@@ -8,13 +8,13 @@ import lombok.Getter;
 import java.math.BigInteger;
 @Getter
 public class RaidPostResponseDto {
-    private BigInteger id;
+    private int id;
     private String description;
     private boolean status;
     private PartyType partyType;
     private Job job;
-    private BigInteger mobId;
-    private BigInteger memberId;
+    private int mobId;
+    private int memberId;
 
     public RaidPostResponseDto(RaidPost raidPost) {
         this.id = raidPost.getId();

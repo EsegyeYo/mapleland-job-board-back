@@ -21,7 +21,7 @@ public class CustomOAuth2User implements OAuth2User {
         return member.isMember_ban();
     }
 
-    public BigInteger getMemberId(){
+    public int getMemberId(){
         return member.getId();
     }
 

@@ -16,8 +16,8 @@ public class PartyPostUpdateRequestDto {
 
     private JsonNullable<Job> job = JsonNullable.undefined();;
 
-    @Schema (type = "BigInteger", example = "1")
-    private JsonNullable<BigInteger> mapId = JsonNullable.undefined();;
+    @Schema (type = "Integer", example = "1")
+    private JsonNullable<Integer> mapId = JsonNullable.undefined();;
 
     @Min(1)
     @Schema (type = "Integer", example = "1")

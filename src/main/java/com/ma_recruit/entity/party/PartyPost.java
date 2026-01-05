@@ -6,18 +6,20 @@ import com.ma_recruit.entity.member.Member;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 
 import java.math.BigInteger;
 
 @Entity
 @Getter
-@RequiredArgsConstructor
+@NoArgsConstructor
+@Table(name = "party_post")
 public class PartyPost extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private BigInteger id;
+    private int id;
 
     // 설명 최소 3글자?
     @Column(nullable = false)
@@ -30,14 +32,13 @@ public class PartyPost extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private PartyType partyType;
 
+    @Enumerated(EnumType.STRING)
     private Job job;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "maple_map_id", nullable = false)
     private MapleMap mapleMap;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "member_id", nullable = false)
     private Member member;
 
     private int member_max_count;
@@ -45,7 +46,7 @@ public class PartyPost extends BaseEntity {
     private int member_count;
 
     @Builder
-    public PartyPost(BigInteger id, String description, boolean status, PartyType partyType, Job job, MapleMap mapleMap, Member member,  int member_max_count, int member_count) {
+    public PartyPost(int id, String description, boolean status, PartyType partyType, Job job, MapleMap mapleMap, Member member,  int member_max_count, int member_count) {
         this.id = id;
         this.description = description;
         this.status = status;

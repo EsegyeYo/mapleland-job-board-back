@@ -12,10 +12,11 @@ import java.math.BigInteger;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Table(name = "profile")
 public class Profile extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private BigInteger id;
+    private int id;
 
     @Column(nullable = false)
     private String nickname;
@@ -28,11 +29,10 @@ public class Profile extends BaseEntity {
     private Job job;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "member_id", nullable = false)
     private Member member;
 
     @Builder
-    public Profile(BigInteger id, String nickname, int level, Job job, Member member) {
+    public Profile(int id, String nickname, int level, Job job, Member member) {
         this.id = id;
         this.nickname = nickname;
         this.level = level;

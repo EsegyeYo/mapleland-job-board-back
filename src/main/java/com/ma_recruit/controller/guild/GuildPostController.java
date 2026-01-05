@@ -4,7 +4,9 @@ import com.ma_recruit.dto.guild.request.GuildPostCreateRequestDto;
 import com.ma_recruit.dto.guild.request.GuildPostUpdateRequestDto;
 import com.ma_recruit.dto.guild.response.GuildPostResponseDto;
 import com.ma_recruit.dto.party.response.PartyPostResponseDto;
+import com.ma_recruit.dto.raid.response.RaidPostResponseDto;
 import com.ma_recruit.entity.member.CustomOAuth2User;
+import com.ma_recruit.entity.party.PartyType;
 import com.ma_recruit.service.guild.GuildPostService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -34,7 +36,7 @@ public class GuildPostController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
 
-        BigInteger memberId = oauthUser.getMemberId();
+        int memberId = oauthUser.getMemberId();
         GuildPostResponseDto responseDto = guildPostService.createGuildPost(memberId, requestDto);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(responseDto);
@@ -43,14 +45,14 @@ public class GuildPostController {
     @PutMapping("/{guildPostId}")
     public ResponseEntity<GuildPostResponseDto> updateGuildPost(
             @AuthenticationPrincipal CustomOAuth2User oauthUser,
-            @PathVariable BigInteger guildPostId,
+            @PathVariable int guildPostId,
             @RequestBody @Valid GuildPostUpdateRequestDto requestDto) {
 
         if (oauthUser == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
 
-        BigInteger memberId = oauthUser.getMemberId();
+        int memberId = oauthUser.getMemberId();
 
         GuildPostResponseDto responseDto =
                 guildPostService.updateGuildPost(memberId, guildPostId, requestDto);
@@ -61,13 +63,13 @@ public class GuildPostController {
     @DeleteMapping("/{guildPostId}")
     public ResponseEntity<Void> deleteGuildPost(
             @AuthenticationPrincipal CustomOAuth2User oauthUser,
-            @PathVariable BigInteger guildPostId) {
+            @PathVariable int guildPostId) {
 
         if (oauthUser == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
 
-        BigInteger memberId = oauthUser.getMemberId();
+        int memberId = oauthUser.getMemberId();
 
         guildPostService.deleteGuildPost(memberId, guildPostId);
 
@@ -80,4 +82,11 @@ public class GuildPostController {
             Pageable pageable) {
         return guildPostService.getGuildPosts(pageable);
     }
+
+    @GetMapping("/{guildPostId}")
+    public GuildPostResponseDto getGuildPost(
+            @PathVariable int guildPostId) {
+        return guildPostService.getGuildPost(guildPostId);
+    }
 }
+

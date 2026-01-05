@@ -24,7 +24,7 @@ public class ProfileService {
      * 프로필 생성
      */
     @Transactional
-    public ProfileResponseDto createProfile(BigInteger memberId, ProfileCreateRequestDto dto) {
+    public ProfileResponseDto createProfile(int memberId, ProfileCreateRequestDto dto) {
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new ProfileException("Member Not Found"));
         if(member.getProfile().size() >= 5){
@@ -45,14 +45,14 @@ public class ProfileService {
      * 프로필 수정
      */
     @Transactional
-    public ProfileResponseDto updateProfile(BigInteger memberId,
-                                            BigInteger profileId,
+    public ProfileResponseDto updateProfile(int memberId,
+                                            int profileId,
                                             ProfileUpdateRequestDto dto) {
 
         Profile profile = profileRepository.findById(profileId)
                 .orElseThrow(() -> new ProfileException("Profile Not Found"));
 
-        if (!profile.getMember().getId().equals(memberId)) {
+        if (profile.getMember().getId() != memberId) {
             throw new ProfileException("권한이 없습니다. (본인 프로필만 수정 가능)");
         }
         if(dto.getNickname().isPresent()) { profile.updateNickname(dto.getNickname().get()); }
@@ -65,11 +65,11 @@ public class ProfileService {
      * 프로필 삭제
      */
     @Transactional
-    public void deleteProfile(BigInteger memberId, BigInteger profileId) {
+    public void deleteProfile(int memberId, int profileId) {
         Profile profile = profileRepository.findById(profileId)
                 .orElseThrow(() -> new ProfileException("Profile Not Found"));
 
-        if (!profile.getMember().getId().equals(memberId)) {
+        if (profile.getMember().getId() != memberId) {
             throw new ProfileException("권한이 없습니다. (본인 프로필만 삭제 가능)");
         }
 

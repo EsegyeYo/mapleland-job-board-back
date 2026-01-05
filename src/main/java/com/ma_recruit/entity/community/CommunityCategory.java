@@ -13,7 +13,7 @@ import java.util.List;
 public class CommunityCategory {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    private int id;
 
     @Column(nullable = false)
     private String name;
