@@ -32,7 +32,7 @@ public class SecurityConfig {
                 .oauth2Login(oauth2 -> oauth2
                         .loginPage("/login")
                         .userInfoEndpoint(userInfo -> userInfo.userService(customOAuth2UserService))
-                        .defaultSuccessUrl("/party-test.html", true)
+                        .defaultSuccessUrl("/", true)
                 );
         return http.build();
     }
