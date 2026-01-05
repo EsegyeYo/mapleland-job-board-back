@@ -6,14 +6,16 @@ import com.ma_recruit.dto.party.response.PartyPostResponseDto;
 import com.ma_recruit.entity.member.Member;
 import com.ma_recruit.entity.party.MapleMap;
 import com.ma_recruit.entity.party.PartyPost;
+import com.ma_recruit.entity.party.PartyType;
 import com.ma_recruit.repository.member.MemberRepository;
 import com.ma_recruit.repository.party.MapleMapRepository;
 import com.ma_recruit.repository.party.PartyPostRepository;
-import jakarta.transaction.Transactional;
+import com.ma_recruit.repository.party.WorldMapRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigInteger;
 
@@ -23,13 +25,14 @@ public class PartyPostService {
     private final MemberRepository memberRepository;
     private final MapleMapRepository mapleMapRepository;
     private final PartyPostRepository partyPostRepository;
+    private final WorldMapRepository worldMapRepository;
 
     /**
      * 파티 게시글 생성
      */
 
     @Transactional
-    public PartyPostResponseDto createPartyPost(BigInteger memberId, PartyPostCreateRequestDto dto) {
+    public PartyPostResponseDto createPartyPost(int memberId, PartyPostCreateRequestDto dto) {
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new IllegalArgumentException("Member Not Found"));
         MapleMap mapleMap = mapleMapRepository.findById(dto.getMapId())
@@ -55,15 +58,15 @@ public class PartyPostService {
      * 파티포스트 수정
      */
     @Transactional
-    public PartyPostResponseDto updatePartyPost(BigInteger memberId,
-                                             BigInteger partyPostId,
+    public PartyPostResponseDto updatePartyPost(int memberId,
+                                                int partyPostId,
                                              PartyPostUpdateRequestDto dto) {
 
         PartyPost partyPost = partyPostRepository.findById(partyPostId)
                 .orElseThrow(() -> new IllegalArgumentException("글을 찾을 수 없습니다."));
         MapleMap mapleMap = mapleMapRepository.findById(dto.getMapId().get())
                 .orElseThrow(() -> new IllegalArgumentException("Map Not Found"));
-        if (!partyPost.getMember().getId().equals(memberId)) {
+        if (partyPost.getMember().getId() != memberId) {
             throw new IllegalStateException("권한이 없습니다. (본인 게시글만 수정 가능)");
         }
         if(dto.getDescription().isPresent()){ partyPost.updateDescription(dto.getDescription().get()); }
@@ -79,12 +82,12 @@ public class PartyPostService {
      * 파티포스트 삭제
      */
     @Transactional
-    public void deletePartyPost(BigInteger memberId,
-                                BigInteger partyPostId) {
+    public void deletePartyPost(int memberId,
+                                int partyPostId) {
 
         PartyPost partyPost = partyPostRepository.findById(partyPostId)
                 .orElseThrow(() -> new IllegalArgumentException("글을 찾을 수 없습니다."));
-        if (!partyPost.getMember().getId().equals(memberId)) {
+        if (partyPost.getMember().getId() != memberId) {
             throw new IllegalStateException("권한이 없습니다. (본인 게시글만 삭제 가능)");
         }
 
@@ -92,13 +95,30 @@ public class PartyPostService {
     }
 
     /**
-     * 파티포스트 페이징네이션 불러오기
+     * 파티포스트 단 건 불러오기
      */
-    @Transactional
-    public Page<PartyPostResponseDto> getPartyPosts(Pageable pageable) {
+    @Transactional(readOnly = true)
+    public PartyPostResponseDto getPartyPost(int partyPostId) {
+        return partyPostRepository.findById(partyPostId)
+                .map(PartyPostResponseDto::new)
+                .orElseThrow(() -> new IllegalArgumentException("글을 찾을 수 없습니다."));
+    }
 
-        Page<PartyPost> page = partyPostRepository.findAll(pageable);
+    /**
+     * 파티포스트 페이징네이션
+     */
+    @Transactional(readOnly = true)
+    public Page<PartyPostResponseDto> getPartyPostsByPartyType(PartyType partyType, Pageable pageable) {
+
+        Page<PartyPost> page = (partyType == null)
+                ? partyPostRepository.findAll(pageable)
+                : partyPostRepository.findByPartyType(partyType, pageable);
 
         return page.map(PartyPostResponseDto::new);
+    }
+
+    @Transactional(readOnly = true)
+    public Long count(){
+        return worldMapRepository.count();
     }
 }

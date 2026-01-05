@@ -21,7 +21,7 @@ public class RaidPostCreateRequestDto {
     private Job job;
 
     @NotNull
-    private BigInteger mobId;
+    private int mobId;
 
     @Min(1)
     private int member_max_count;

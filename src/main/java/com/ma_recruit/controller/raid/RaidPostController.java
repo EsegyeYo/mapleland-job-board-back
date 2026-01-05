@@ -1,10 +1,12 @@
 package com.ma_recruit.controller.raid;
 
 import com.ma_recruit.dto.guild.response.GuildPostResponseDto;
+import com.ma_recruit.dto.party.response.PartyPostResponseDto;
 import com.ma_recruit.dto.raid.request.RaidPostCreateRequestDto;
 import com.ma_recruit.dto.raid.request.RaidPostUpdateRequestDto;
 import com.ma_recruit.dto.raid.response.RaidPostResponseDto;
 import com.ma_recruit.entity.member.CustomOAuth2User;
+import com.ma_recruit.entity.party.PartyType;
 import com.ma_recruit.service.raid.RaidPostService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -34,7 +36,7 @@ public class RaidPostController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
 
-        BigInteger memberId = oauthUser.getMemberId();
+        int memberId = oauthUser.getMemberId();
         RaidPostResponseDto responseDto = raidPostService.createPartyPost(memberId, requestDto);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(responseDto);
@@ -43,14 +45,14 @@ public class RaidPostController {
     @PutMapping("/{raidPostId}")
     public ResponseEntity<RaidPostResponseDto> updateRaidPost(
             @AuthenticationPrincipal CustomOAuth2User oauthUser,
-            @PathVariable BigInteger raidPostId,
+            @PathVariable int raidPostId,
             @RequestBody @Valid RaidPostUpdateRequestDto requestDto) {
 
         if (oauthUser == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
 
-        BigInteger memberId = oauthUser.getMemberId();
+        int memberId = oauthUser.getMemberId();
 
         RaidPostResponseDto responseDto =
                 raidPostService.updateRaidPost(memberId, raidPostId, requestDto);
@@ -61,13 +63,13 @@ public class RaidPostController {
     @DeleteMapping("/{raidPostId}")
     public ResponseEntity<Void> deleteRaidPost(
             @AuthenticationPrincipal CustomOAuth2User oauthUser,
-            @PathVariable BigInteger raidPostId) {
+            @PathVariable int raidPostId) {
 
         if (oauthUser == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
 
-        BigInteger memberId = oauthUser.getMemberId();
+        int memberId = oauthUser.getMemberId();
 
         raidPostService.deleteRaidPost(memberId, raidPostId);
 
@@ -76,9 +78,17 @@ public class RaidPostController {
 
     @GetMapping("/raid-posts")
     public Page<RaidPostResponseDto> getRaidPosts(
+            @RequestParam(required = false) PartyType partyType,
             @PageableDefault(size = 10, sort = "createdAt", direction = Sort.Direction.DESC)
             Pageable pageable) {
-        return raidPostService.getRaidPosts(pageable);
+
+        return raidPostService.getRaidPostsByPartyType(partyType, pageable);
+    }
+
+    @GetMapping("/{raidPostId}")
+    public RaidPostResponseDto getRaidPost(
+            @PathVariable int raidPostId) {
+        return raidPostService.getRaidPost(raidPostId);
     }
 
 }

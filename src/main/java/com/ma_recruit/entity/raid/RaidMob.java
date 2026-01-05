@@ -2,6 +2,7 @@ package com.ma_recruit.entity.raid;
 
 import jakarta.persistence.*;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 
 import java.math.BigInteger;
@@ -10,11 +11,12 @@ import java.util.List;
 
 @Entity
 @Getter
-@RequiredArgsConstructor
+@NoArgsConstructor
+@Table(name = "raid_mob")
 public class RaidMob {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private BigInteger id;
+    private int id;
 
     @Column(nullable = false)
     private String name;

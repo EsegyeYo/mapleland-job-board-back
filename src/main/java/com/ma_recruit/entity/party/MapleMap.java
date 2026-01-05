@@ -1,18 +1,21 @@
 package com.ma_recruit.entity.party;
 
 import jakarta.persistence.*;
+import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 
 import java.math.BigInteger;
 
 @Getter
 @Entity
-@RequiredArgsConstructor
+@NoArgsConstructor
+@Table(name = "maple_map")
 public class MapleMap {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private BigInteger id;
+    private int id;
 
     @Column(nullable = false)
     private String name;
@@ -21,6 +24,11 @@ public class MapleMap {
     private String map_url;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "world_map_id", nullable = false)
     private WorldMap worldMap;
+
+    public MapleMap(String name, String map_url, WorldMap worldMap) {
+        this.name = name;
+        this.map_url = map_url;
+        this.worldMap = worldMap;
+    }
 }

@@ -9,12 +9,12 @@ import java.util.ArrayList;
 
 @Getter
 public class GuildPostResponseDto {
-    private BigInteger id;
+    private int id;
     private String description;
     private boolean status;
     private Job job;
     private ArrayList<String> condition;
-    private BigInteger memberId;
+    private int memberId;
     private String guild_name;
 
     public GuildPostResponseDto(GuildPost guildPost) {
@@ -23,7 +23,7 @@ public class GuildPostResponseDto {
         this.status = guildPost.isStatus();
         this.job = guildPost.getJob();
         this.guild_name = guildPost.getGuild_name();
-        this.condition = guildPost.getCondition(); // TODO: toString으로 변환해서 날려야할듯?
+        this.condition = guildPost.getConditions(); // TODO: toString으로 변환해서 날려야할듯?
         this.memberId = guildPost.getMember().getId();
     }
 }

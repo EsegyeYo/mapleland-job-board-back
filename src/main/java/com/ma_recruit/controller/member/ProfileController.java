@@ -29,7 +29,7 @@ public class ProfileController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
 
-        BigInteger memberId = oauthUser.getMemberId();
+        int memberId = oauthUser.getMemberId();
 
         ProfileResponseDto responseDto = profileService.createProfile(memberId, requestDto);
 
@@ -39,14 +39,14 @@ public class ProfileController {
     @PutMapping("/{profileId}")
     public ResponseEntity<ProfileResponseDto> updateProfile(
             @AuthenticationPrincipal CustomOAuth2User oauthUser,
-            @PathVariable BigInteger profileId,
+            @PathVariable int profileId,
             @RequestBody @Valid ProfileUpdateRequestDto requestDto) {
 
         if (oauthUser == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
 
-        BigInteger memberId = oauthUser.getMemberId();
+        int memberId = oauthUser.getMemberId();
 
         ProfileResponseDto responseDto =
                 profileService.updateProfile(memberId, profileId, requestDto);
@@ -57,13 +57,13 @@ public class ProfileController {
     @DeleteMapping("/{profileId}")
     public ResponseEntity<Void> deleteProfile(
             @AuthenticationPrincipal CustomOAuth2User oauthUser,
-            @PathVariable BigInteger profileId) {
+            @PathVariable int profileId) {
 
         if (oauthUser == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
 
-        BigInteger memberId = oauthUser.getMemberId();
+        int memberId = oauthUser.getMemberId();
 
         profileService.deleteProfile(memberId, profileId);
 

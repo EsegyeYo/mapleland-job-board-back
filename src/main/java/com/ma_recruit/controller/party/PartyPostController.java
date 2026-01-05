@@ -6,6 +6,7 @@ import com.ma_recruit.dto.party.request.PartyPostCreateRequestDto;
 import com.ma_recruit.dto.party.request.PartyPostUpdateRequestDto;
 import com.ma_recruit.dto.party.response.PartyPostResponseDto;
 import com.ma_recruit.entity.member.CustomOAuth2User;
+import com.ma_recruit.entity.party.PartyType;
 import com.ma_recruit.service.party.PartyPostService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -35,7 +36,7 @@ public class PartyPostController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
 
-        BigInteger memberId = oauthUser.getMemberId();
+        int memberId = oauthUser.getMemberId();
         PartyPostResponseDto responseDto = partyPostService.createPartyPost(memberId, requestDto);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(responseDto);
@@ -44,14 +45,14 @@ public class PartyPostController {
     @PutMapping("/{partyPostId}")
     public ResponseEntity<PartyPostResponseDto> updatePartyPost(
             @AuthenticationPrincipal CustomOAuth2User oauthUser,
-            @PathVariable BigInteger partyPostId,
+            @PathVariable int partyPostId,
             @RequestBody @Valid PartyPostUpdateRequestDto requestDto) {
 
         if (oauthUser == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
 
-        BigInteger memberId = oauthUser.getMemberId();
+        int memberId = oauthUser.getMemberId();
 
         PartyPostResponseDto responseDto =
                 partyPostService.updatePartyPost(memberId, partyPostId, requestDto);
@@ -62,23 +63,31 @@ public class PartyPostController {
     @DeleteMapping("/{partyPostId}")
     public ResponseEntity<Void> deletePartyPost(
             @AuthenticationPrincipal CustomOAuth2User oauthUser,
-            @PathVariable BigInteger partyPostId) {
+            @PathVariable int partyPostId) {
 
         if (oauthUser == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
 
-        BigInteger memberId = oauthUser.getMemberId();
+        int memberId = oauthUser.getMemberId();
 
         partyPostService.deletePartyPost(memberId, partyPostId);
 
         return ResponseEntity.noContent().build();
     }
 
+    @GetMapping("/{partyPostId}")
+    public PartyPostResponseDto getPartyPost(
+           @PathVariable int partyPostId) {
+        return partyPostService.getPartyPost(partyPostId);
+    }
+
     @GetMapping("/party-posts")
     public Page<PartyPostResponseDto> getPartyPosts(
+            @RequestParam(required = false) PartyType partyType,
             @PageableDefault(size = 10, sort = "createdAt", direction = Sort.Direction.DESC)
             Pageable pageable) {
-        return partyPostService.getPartyPosts(pageable);
+
+        return partyPostService.getPartyPostsByPartyType(partyType, pageable);
     }
 }

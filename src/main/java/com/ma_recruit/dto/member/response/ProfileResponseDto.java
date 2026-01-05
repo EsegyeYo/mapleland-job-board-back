@@ -9,11 +9,11 @@ import java.math.BigInteger;
 @Getter
 public class ProfileResponseDto {
 
-    private BigInteger id;
+    private int id;
     private String nickname;
     private int level;
     private Job job;
-    private BigInteger memberId;
+    private int memberId;
 
     public ProfileResponseDto(Profile profile) {
         this.id = profile.getId();

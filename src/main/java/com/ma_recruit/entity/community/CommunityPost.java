@@ -16,7 +16,7 @@ import java.util.List;
 public class CommunityPost extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private BigInteger id;
+    private int id;
 
     @Column(nullable = false)
     private String title;

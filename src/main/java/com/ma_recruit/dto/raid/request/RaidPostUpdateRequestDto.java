@@ -16,8 +16,8 @@ public class RaidPostUpdateRequestDto {
 
     private JsonNullable<Job> job = JsonNullable.undefined();;
 
-    @Schema (type = "BigInteger", example = "1")
-    private JsonNullable<BigInteger> mobId = JsonNullable.undefined();;
+    @Schema (type = "Integer", example = "1")
+    private JsonNullable<Integer> mobId = JsonNullable.undefined();;
 
     @Min(1)
     @Schema (type = "Integer", example = "1")

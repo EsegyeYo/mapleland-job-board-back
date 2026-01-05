@@ -16,7 +16,7 @@ public class GuildPostUpdateRequestDto {
     @Schema (type = "String", example = "길드원 구해요")
     private JsonNullable<String> description = JsonNullable.undefined();
 
-    @Schema (type = "Integer", example = "길드명")
+    @Schema (type = "String", example = "길드명")
     private JsonNullable<String> guild_name = JsonNullable.undefined();
 
     @Schema (type = "Enum", example = "프리스트")

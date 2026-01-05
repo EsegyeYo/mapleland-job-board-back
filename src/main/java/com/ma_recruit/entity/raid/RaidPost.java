@@ -7,17 +7,19 @@ import com.ma_recruit.entity.party.PartyType;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 
 import java.math.BigInteger;
 
 @Entity
 @Getter
-@RequiredArgsConstructor
+@NoArgsConstructor
+@Table(name = "raid_post")
 public class RaidPost extends BaseEntity {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private BigInteger id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private int id;
 
     // 설명 최소 3글자?
     @Column(nullable = false)
@@ -30,6 +32,7 @@ public class RaidPost extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private PartyType partyType;
 
+    @Enumerated(EnumType.STRING)
     private Job job;
 
     private int member_max_count;
@@ -37,15 +40,13 @@ public class RaidPost extends BaseEntity {
     private int member_count;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "raid_mob_id", nullable = false)
     private RaidMob raidMob;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "member_id", nullable = false)
     private Member member;
 
     @Builder
-    public RaidPost(BigInteger id, String description, boolean status, PartyType partyType, Job job, int member_max_count, int member_count, RaidMob raidMob, Member member) {
+    public RaidPost(int id, String description, boolean status, PartyType partyType, Job job, int member_max_count, int member_count, RaidMob raidMob, Member member) {
         this.id = id;
         this.description = description;
         this.status = status;

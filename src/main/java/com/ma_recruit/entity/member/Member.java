@@ -13,11 +13,12 @@ import java.util.List;
 
 @Entity
 @Getter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@NoArgsConstructor
+@Table(name = "member")
 public class Member extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private BigInteger id;
+    private int id;
 
     @Column(nullable = false)
     private String discord_id;
@@ -38,7 +39,7 @@ public class Member extends BaseEntity {
     private List<Profile> profile = new ArrayList<>();
 
     @Builder
-    public Member(BigInteger id, String discord_id, String discord_photo, Role role, boolean user_ban, List<Profile> profile, String discordName) {
+    public Member(int id, String discord_id, String discord_photo, Role role, boolean user_ban, List<Profile> profile, String discordName) {
         this.id = id;
         this.discord_id = discord_id;
         this.role = role;
