@@ -64,4 +64,4 @@ out/
 .springBeans
 
 # Test
-*.html
+*.htmlsrc/main/resources/application.yaml
