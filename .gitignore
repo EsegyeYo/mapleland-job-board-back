@@ -65,6 +65,5 @@ out/
 
 # Test
 *.html
-*.yaml
 src/main/java/com/ma_recruit/entity/party/PartyInitData.java
 
