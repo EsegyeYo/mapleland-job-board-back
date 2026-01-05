@@ -1,0 +1,20 @@
+spring:
+  datasource:
+    driver-class-name: org.mariadb.jdbc.Driver
+    url: jdbc:mariadb://mariadb:3307/ma_recruit
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+
+#  sql:
+#    init:
+#      mode: always
+#     data-locations: classpath:data.sql
+
+  jpa:
+    hibernate:
+      ddl-auto: update   # ⚠️ dev에서만 허용
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+    generate-ddl: true
