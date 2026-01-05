@@ -18,7 +18,7 @@ import java.util.ArrayList;
 @Table(name = "guild_post")
 public class GuildPost extends BaseEntity {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
     // 설명 최소 3글자?
