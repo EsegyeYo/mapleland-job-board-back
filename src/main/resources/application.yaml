@@ -3,7 +3,7 @@ server:
 
 spring:
   profiles:
-    active: prod   # 기본 실행 프로필 (개발용)
+    active: dev   # 기본 실행 프로필 (개발용)
   config:
     import: optional:file:.env[.properties]
 
