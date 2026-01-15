@@ -3,14 +3,15 @@ package com.ma_recruit.service.member;
 import com.ma_recruit.dto.member.request.ProfileCreateRequestDto;
 import com.ma_recruit.dto.member.request.ProfileUpdateRequestDto;
 import com.ma_recruit.dto.member.response.ProfileResponseDto;
+import com.ma_recruit.dto.party.response.PartyPostResponseDto;
 import com.ma_recruit.entity.member.Member;
 import com.ma_recruit.entity.member.Profile;
 import com.ma_recruit.global.exception.ProfileException;
 import com.ma_recruit.repository.member.MemberRepository;
 import com.ma_recruit.repository.member.ProfileRepository;
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigInteger;
 
@@ -74,5 +75,20 @@ public class ProfileService {
         }
 
         profileRepository.delete(profile);
+    }
+
+    /**
+     * 프로필 단 건 불러오기
+     */
+    @Transactional(readOnly = true)
+    public ProfileResponseDto getProfile(int memberId,int profileId) {
+        Profile profile = profileRepository.findById(profileId)
+                .orElseThrow(() -> new ProfileException("Profile Not Found"));
+
+        if (profile.getMember().getId() != memberId) {
+            throw new ProfileException("권한이 없습니다. (본인 프로필만 조회 가능)");
+        }
+
+        return new ProfileResponseDto(profile);
     }
 }

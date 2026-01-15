@@ -3,6 +3,7 @@ package com.ma_recruit.controller.member;
 import com.ma_recruit.dto.member.request.ProfileCreateRequestDto;
 import com.ma_recruit.dto.member.request.ProfileUpdateRequestDto;
 import com.ma_recruit.dto.member.response.ProfileResponseDto;
+import com.ma_recruit.dto.raid.response.RaidPostResponseDto;
 import com.ma_recruit.entity.member.CustomOAuth2User;
 import com.ma_recruit.service.member.ProfileService;
 import jakarta.validation.Valid;
@@ -68,5 +69,12 @@ public class ProfileController {
         profileService.deleteProfile(memberId, profileId);
 
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/{profileId}")
+    public ProfileResponseDto getProfile(
+            @AuthenticationPrincipal CustomOAuth2User oauthUser,
+            @PathVariable int profileId) {
+        return profileService.getProfile(oauthUser.getMemberId(), profileId);
     }
 }

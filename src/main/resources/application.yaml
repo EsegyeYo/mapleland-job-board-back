@@ -1,9 +1,9 @@
 server:
   port: 8080
-
+# 테스트용 주석
 spring:
   profiles:
-    active: prod   # 기본 실행 프로필 (개발용)
+    active: test   # 기본 실행 프로필 (개발용)
   config:
     import: optional:file:.env[.properties]
 
